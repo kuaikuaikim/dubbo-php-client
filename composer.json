@@ -1,0 +1,16 @@
+{
+    "name": "quickj/dubbo-php-client",
+    "description": "dubbo php client",
+    "authors": [
+        {
+            "name": "jquick",
+            "email": "314127900@qq.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "dubbo_cli": "classes/"
+        }
+    }
+}
