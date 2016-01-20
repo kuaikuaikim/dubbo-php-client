@@ -4,8 +4,6 @@ namespace dubbo;
 class dubboPhpClient{
 
 
-
-
 }
 
 

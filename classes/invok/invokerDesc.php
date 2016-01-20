@@ -19,8 +19,8 @@ public function getService(){
 }
 public function toString(){
 	$group_str = isset($this->group) ? $this->group : ' ';
-	$version_str = isset($this->group) ? $this->group : ' ';
-	return $this.serviceName .'_' .$group_str.'_' .$version_str;
+	$version_str = isset($this->version) ? $this->version : ' ';
+	return $this->serviceName .'_' .$group_str.'_' .$version_str;
 }
 
 
