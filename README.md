@@ -4,8 +4,8 @@ the dubbo php client
 [Dubbo](https://github.com/alibaba/dubbo) is a distributed service framework empowers applications with service import/export capability with high performance RPC.  
 
 This is only dubbo php clinet implementation. It's only support jsonRPC now.  
-you can see the example for the [dubbo-jsonRPC-demo](https://github.com/quickj/dubbo_jsonrpc_demo) which i write before.
-Notice: you must start dubbo and zookeeper,register prividers first.
+you can see the example for the [dubbo-jsonRPC-demo](https://github.com/quickj/dubbo_jsonrpc_demo) which i write before.  
+Notice: you must start dubbo and zookeeper,register prividers first.  
 
 ###usage for the dubo-php-client
 ```php
