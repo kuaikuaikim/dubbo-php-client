@@ -7,7 +7,12 @@ This is only dubbo php clinet implementation. It's only support jsonRPC now.
 you can see the example for the [dubbo-jsonRPC-demo](https://github.com/quickj/dubbo_jsonrpc_demo) which i write before.  
 Notice: you must start dubbo and zookeeper,register prividers first.  
 
-###usage for the dubo-php-client
+###Installation  
+```bash
+composer require quickj/dubbo-php-client
+```  
+
+###Usage
 ```php
 use \dubbo\dubboClient;
 // options for register consumer
@@ -19,4 +24,4 @@ $dubboCli = new dubboClient($options);
 $HelloService = $dubboCli->getService("com.dubbo.demo.HelloService","1.0.0",null);
 $ret = $HelloService->hello("dubbo php client");
 echo $ret;
-
+```
