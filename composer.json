@@ -10,7 +10,9 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "dubbo\\dubboClient": "src/dubboClient"
+            "dubbo\":"src",
+            "dubbo\invok\":"src/invok",
+            "dubbo\protocols\":"src/invok/protocols"
         }
     }
 }
