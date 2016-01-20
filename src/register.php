@@ -3,7 +3,9 @@
 namespace dubbo;
 
 require_once "invok/cluster.php";
+require_once "invok/invoker.php";
 use \dubbo\invok\Cluster;
+use dubbo\invok\Invoker;
 
 class Register{
 
@@ -36,15 +38,12 @@ public function subscribe($invokDesc){
        $serviceName = $invokDesc->getService();
 
        $path = $this->getSubscribePath($serviceName);
-
        $children = $this->zookeeper->getChildren($path);
-
        if(count($children) > 0){
        	foreach ($children as $key => $provider) {
             $provider = urldecode($provider);
        		$this->methodChangeHandler($invokDesc, $provider);
        	}
-
        $this->configurators();
 }
 
@@ -56,6 +55,8 @@ public function register($invokDesc,$invoker){
         self::$ServiceMap[$desc] = $invoker;
     }
     $this->subscribe($invokDesc);
+    $providerHost = $this->providersCluster->getProvider($invokDesc);
+    $invoker->setHost(Invoker::genDubboUrl($providerHost,$invokDesc));
     $registerPath = $this->getRegistryPath($invokDesc->getService());
     $this->zookeeper->create($registerPath,null,array('word','anyone'));
     return true;
@@ -63,18 +64,22 @@ public function register($invokDesc,$invoker){
 
 
 public function methodChangeHandler($invokerDesc, $provider){
-
     $schemeInfo = parse_url($provider);
     $providerConfig = array();
     parse_str($schemeInfo['query'],$providerConfig);
-    var_dump($invokerDesc->isMatch($providerConfig['group'],$providerConfig['version']));
+
     if($invokerDesc->isMatch($providerConfig['group'],$providerConfig['version']))
     {
-        $this->providersCluster->addProvider($invokerDesc,$schemeInfo['host'],$schemeInfo['scheme']);
+        $this->providersCluster->addProvider($invokerDesc,'http://'.$schemeInfo['host'].':'.$schemeInfo['port'],$schemeInfo['scheme']);
     }
-
-
 }
+
+
+public function getInvoker($invokerDesc){
+    $desc = $invokerDesc->toString();
+    return self::$ServiceMap[$desc];
+}
+
 
 
 public function configurators(){
@@ -83,7 +88,7 @@ public function configurators(){
 
 
 
-public function getSubscribePath($serviceName){
+protected function getSubscribePath($serviceName){
 	return '/dubbo/' .$serviceName.'/providers';
 }
 

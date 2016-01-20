@@ -28,6 +28,14 @@ abstract class Invoker{
         return $this->cluster;
     }
 
+    public function setHost($url){
+        $this->url = $url;
+    }
+
+    public static function genDubboUrl($host,$invokerDesc){
+        return $host.'/'.$invokerDesc->getService();
+    }
+
     abstract protected function __call($name,$arguments);
 }
 
