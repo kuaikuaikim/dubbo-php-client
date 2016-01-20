@@ -10,7 +10,7 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "dubbo\": "src/"
+            "dubbo\dubboClient": "src/dubboClient.php"
         }
     }
 }
