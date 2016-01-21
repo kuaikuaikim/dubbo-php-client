@@ -10,10 +10,18 @@ Notice: you must start dubbo and zookeeper,register prividers first.
 ###Installation  
 If you have not installed [zookeeper extension](http://pecl.php.net/package/zookeeper) for php,then
 ```bash
-apt-get install php-pear php5-dev make  
-pecl install zookeeper
+sudo apt-get install php-pear php5-dev make  
+sudo pecl install zookeeper
 ```  
-Require dubbo-php-client composer package to your project
+Maybe occuring an error with "zookeeper support requires libzookeeper" when you install the zookeeper extension,you should install the libzookeeper needed.
+```bash
+cd {your zookeeper dir}/src/c/
+./configure
+make
+sudo make install
+```
+
+#####Require dubbo-php-client composer package to your project
 ```bash
 composer require quickj/dubbo-php-client
 ```  
