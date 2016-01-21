@@ -23,7 +23,7 @@ cd ${your zookeeper home dir}/src/c/
 make
 sudo make install
 ```
-Add zookeeper.so to your php.ini(/etc/php5/apache2/php.ini /etc/php5/cli/php.ini)  
+Add zookeeper.so to your php.ini(/etc/php5/apache2/php.ini and /etc/php5/cli/php.ini)  
 ```bash
 extension="/usr/lib/php5/20121212/zookeeper.so"  
 ```  
@@ -51,7 +51,12 @@ echo $ret;
 ###dubbo-php-client 中文版说明
 [DUBBO](https://github.com/alibaba/dubbo)是一个分布式服务框架,致力于提供高性能和透明化的RPC远程服务调用方案,是阿里巴巴SOA服务化治理方案的核心框架  
 这是dubbo的唯一php客户端，目前只支持jsonRPC协议，将来会支持多种协议。你可以查看我之前写的[dubbo-jsonRPC-demo](https://github.com/quickj/dubbo_jsonrpc_demo)例子。  
-注意: 使用之前你必须安装和启动dubbo,zookeeper,注册服务者。  
+#####注意:  
+使用之前你必须安装和启动dubbo,zookeeper,注册服务者。  
+#####建议:
+如果你想设置zookeeper watcher(zookeeper会主动通知消费者)来监听zookeeper node节点地变化,你必须得有一个一直运行地容器(java nodejs python等原生支持).但lamp,lnmp这种模式，PHP不是守护进程。  
+我们发现了一个不错的PHP容器[Swoole](http://www.swoole.com/)。Swoole:PHP语言的异步、并行、高性能网络通信框架,使用纯C语言编写,提供了PHP语言的异步多线程服务器.  
+
 ###安装
 如果你还没安装php的[zookeeper扩展](http://pecl.php.net/package/zookeeper)，需要
 ```bash
@@ -66,7 +71,7 @@ cd ${your zookeeper home dir}/src/c/
 make
 sudo make install
 ```
-添加 zookeeper.so 到你的php.ini(/etc/php5/apache2/php.ini /etc/php5/cli/php.ini)    
+添加 zookeeper.so 到你的php.ini(/etc/php5/apache2/php.ini和/etc/php5/cli/php.ini)    
 添加以下这行
 ```bash
 extension="/usr/lib/php5/20121212/zookeeper.so"
