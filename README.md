@@ -9,7 +9,7 @@ you can see the example for the [dubbo-jsonRPC-demo](https://github.com/quickj/d
 you must start dubbo and zookeeper,register prividers first.  
 #####Suggest:   
 If you want have a watcher listening on the zookeeper(zookeeper will notify the counsumer in real time),you need have a runtime container(java nodejs python simply support). This model(lamp or lnmp),php is not a daemon process.  
-we have found a good runtime container [Swoole](http://www.swoole.com/) to support.Swoole is an event-driven, asynchronous & concurrent networking communication framework with higher performance written only in C for PHP.
+we have found a good runtime container [Swoole](http://www.swoole.com/).Swoole is an event-driven, asynchronous & concurrent networking communication framework with higher performance written only in C for PHP.
 ###Installation  
 If you have not installed [zookeeper extension](http://pecl.php.net/package/zookeeper) for php,then
 ```bash
