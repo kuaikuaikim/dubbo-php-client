@@ -13,9 +13,13 @@ If you have not installed [zookeeper extension](http://pecl.php.net/package/zook
 sudo apt-get install php-pear php5-dev make  
 sudo pecl install zookeeper
 ```  
+Add zookeeper.so to your php.ini  
+```bash
+/usr/lib/php5/20121212/zookeeper.so
+```
 Maybe occuring an error with "zookeeper support requires libzookeeper" when you install the zookeeper extension,you should install the libzookeeper needed.
 ```bash
-cd {your zookeeper dir}/src/c/
+cd ${your zookeeper home dir}/src/c/
 ./configure
 make
 sudo make install
