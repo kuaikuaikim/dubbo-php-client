@@ -21,6 +21,12 @@ protected $providersCluster;
 
 public static $ServiceMap = array();
 
+protected  $acl = array(
+                  array(
+                    'perms' => \Zookeeper::PERM_ALL,
+                    'scheme' => 'world',
+                    'id' => 'anyone' ) );
+
 public function __construct($options = array())
 {
 	$this->config = array_merge($this->config,$options);
@@ -58,7 +64,7 @@ public function register($invokDesc,$invoker){
     $providerHost = $this->providersCluster->getProvider($invokDesc);
     $invoker->setHost(Invoker::genDubboUrl($providerHost,$invokDesc));
     $registerPath = $this->getRegistryPath($invokDesc->getService());
-    $this->zookeeper->create($registerPath,null,array('word','anyone'));
+    $this->zookeeper->create($registerPath,null,$this->acl, null);
     return true;
 }
 

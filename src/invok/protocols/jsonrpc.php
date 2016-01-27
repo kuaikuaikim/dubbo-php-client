@@ -5,7 +5,7 @@ require_once dirname(dirname(__FILE__))."/invoker.php";
 
 use \dubbo\invok\Invoker;
 
-class jsonRPC extends Invoker{
+class jsonrpc extends Invoker{
 
     public function __construct()
     {

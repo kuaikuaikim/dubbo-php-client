@@ -10,7 +10,7 @@ abstract class Invoker{
     protected $debug;
     protected $notification = false;
     protected $cluster;
-    public function __construct($url, $debug=false) {
+    public function __construct($url=null, $debug=false) {
         // server URL
         $this->url = $url;
         $this->id = 1;
@@ -34,6 +34,10 @@ abstract class Invoker{
 
     public static function genDubboUrl($host,$invokerDesc){
         return $host.'/'.$invokerDesc->getService();
+    }
+
+    public function toString(){
+        return  __CLASS__;
     }
 
     abstract protected function __call($name,$arguments);
