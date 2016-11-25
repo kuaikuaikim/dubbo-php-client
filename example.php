@@ -20,6 +20,11 @@ $options= array(
 $dubboCli = new dubboClient($options);
 $testService = $dubboCli->getService("com.dubbo.demo.HelloService","1.0.0",null);
 $ret = $testService->hello("dubbo php client");
-echo $ret;
+$mapRet = $testService->mapEcho();
+$objectRet = $testService->objectEcho();
+
+var_dump($ret);
+var_dump($mapRet);
+var_dump($objectRet);
 
 ?>

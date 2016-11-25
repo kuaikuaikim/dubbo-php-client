@@ -8,43 +8,60 @@ use \dubbo\invok\protocols\jsonRPC;
 use \dubbo\invok\invokerDesc;
 use \dubbo\invok\protocols;
 
+/**
+ * Class dubboClient
+ * @package dubbo
+ */
 class dubboClient{
     protected $register;
-    protected $protocols;
+    static $protocols;
 
     public function __construct($options=array())
     {
         $this->register = new Register($options);
     }
 
+    /**
+     * @param $serviceName  (service name e.g. com.xx.serviceName)
+     * @param $version  (service version e.g. 1.0)
+     * @param $group    (service group)
+     * @param string $protocol (service protocol e.g. jsonrpc dubbo hessian)
+     * @return get| specific dubbo service with your params
+     */
     public function getService($serviceName, $version, $group, $protocol = "jsonrpc"){
         $invokerDesc = new InvokerDesc($serviceName, $version, $group);
         $invoker = $this->register->getInvoker($invokerDesc);
         if(!$invoker){
             //$invoker = new jsonrpc();
-            $invoker = $this->getInvokerByProtocol($protocol);
+            $invoker = $this->makeInvokerByProtocol($protocol);
             $this->register->register($invokerDesc,$invoker);
         }
         return $invoker;
     }
 
-    public function getInvokerByProtocol($protocol){
 
-        if(!in_array($protocol, $this->protocols)){
-            foreach( glob( "invok/protocols/*.php" ) as $filename ){
-                $protoName = basename($filename,".php");
-                array_push($this->protocols, $protoName);
-                require_once $filename;
-            } 
+    /**
+     * @param $protocol
+     * @return get instance of specific protocol
+     */
+    private function makeInvokerByProtocol($protocol){
+
+        if(array_key_exists(self::$protocols,$protocol)){
+            return self::$protocols[$protocol];
         }
-      
-        if(class_exists("dubbo\invok\protocols\\$protocol")){
-              $class =  new \ReflectionClass("dubbo\invok\protocols\\$protocol");
-              $invoker = $class->newInstanceArgs(array());
-              return $invoker;
-        }else{
-            throw new \Exception("can't match the class according to this protocol $protocol");
+
+        foreach( glob( dirname(__FILE__)."/invok/protocols/*.php" ) as $filename ){
+            $protoName = basename($filename,".php");
+            require_once $filename;
+            if(class_exists("dubbo\invok\protocols\\$protoName")){
+                $class =  new \ReflectionClass("dubbo\invok\protocols\\$protoName");
+                $invoker = $class->newInstanceArgs(array());
+                self::$protocols[$protoName] = $invoker;
+            }
         }
+
+        return self::$protocols[$protocol];
+
     }
 
 }
