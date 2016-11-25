@@ -108,11 +108,9 @@ class Register{
     }
 
 
-
     public function configurators(){
         return true;
     }
-
 
 
     protected function getSubscribePath($serviceName){
@@ -120,7 +118,7 @@ class Register{
     }
 
     protected function getRegistryAddress() {
-            return $this->config['registry_address'];
+        return $this->config['registry_address'];
     }
 
 
@@ -135,7 +133,7 @@ class Register{
         $params = http_build_query($application);
         $url = '/dubbo/'.$serviceName.'/consumers/'.urlencode('consumer://'.$this->ip.'/'.$serviceName.'?').$params;
         return $url;
-}
+    }
 
 
     /**
@@ -151,11 +149,11 @@ class Register{
 
 
     protected function getConfiguratorsPath($serviceName){
-            return '/dubbo/'.$serviceName.'/configurators';
+        return '/dubbo/'.$serviceName.'/configurators';
     }
 
     protected function  getProviderTimeout(){
-            return $this->config['provider_timeout'] * 1000;
+        return $this->config['provider_timeout'] * 1000;
     }
 
 
@@ -171,27 +169,25 @@ class Register{
      * we will get from the command.
      */
     private function achieveRegisterIp(){
-    try {
-        $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
-        if (empty($registerIp)) {
-            if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
-                $ss = exec('/sbin/ifconfig | sed -n \'s/^ *.*addr:\\([0-9.]\\{7,\\}\\) .*$/\\1/p\'', $arr);
-                $registerIp = $arr[0];
-            }else{
-               /** @TODO
-                *  @ implement the windows ip
-                **/
+        try {
+            $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
+            if (empty($registerIp)) {
+                if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
+                    $ss = exec('/sbin/ifconfig | sed -n \'s/^ *.*addr:\\([0-9.]\\{7,\\}\\) .*$/\\1/p\'', $arr);
+                    $registerIp = $arr[0];
+                }else{
+                   /** @TODO
+                    *  @ implement the windows ip
+                    **/
+                }
             }
+        }catch (\Exception $e){
+            error_log("We can't get your local ip address.\n");
+            error_log($e->getMessage()."\n");
         }
-    }catch (\Exception $e){
-        error_log("We can't get your local ip address.\n");
-        error_log($e->getMessage()."\n");
+        return $registerIp;
     }
-    return $registerIp;
-}
-
 
 }
-
 
 ?>
