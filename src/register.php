@@ -170,15 +170,14 @@ class Register{
      */
     private function achieveRegisterIp(){
         try {
-            $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
+            if($_SERVER['SERVER_ADDR'])
+                $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
             if (empty($registerIp)) {
                 if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
                     $ss = exec('/sbin/ifconfig | sed -n \'s/^ *.*addr:\\([0-9.]\\{7,\\}\\) .*$/\\1/p\'', $arr);
                     $registerIp = $arr[0];
                 }else{
-                   /** @TODO
-                    *  @ implement the windows ip
-                    **/
+                   // TODO: implement the windows ip
                 }
             }
         }catch (\Exception $e){

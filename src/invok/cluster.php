@@ -22,14 +22,14 @@ class Cluster{
 
     public function addProvider($invokerDesc,$host,$schema){
         $desc = $invokerDesc->toString();
-        $this->providerMap[$desc][] = $host;
+        self::$providerMap[$desc][] = $host;
     }
 
 
     public function getProvider($invokerDesc){
         $desc = $invokerDesc->toString();
-        $key = array_rand($this->providerMap[$desc]);
-        return $this->providerMap[$desc][$key];
+        $key = array_rand(self::$providerMap[$desc]);
+        return self::$providerMap[$desc][$key];
     }
 
     public function getProviders(){

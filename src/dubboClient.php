@@ -14,7 +14,7 @@ use \dubbo\invok\protocols;
  */
 class dubboClient{
     protected $register;
-    static $protocols;
+    static $protocols = array();
 
     public function __construct($options=array())
     {
@@ -46,7 +46,7 @@ class dubboClient{
      */
     private function makeInvokerByProtocol($protocol){
 
-        if(array_key_exists(self::$protocols,$protocol)){
+        if(array_key_exists($protocol,self::$protocols)){
             return self::$protocols[$protocol];
         }
 
