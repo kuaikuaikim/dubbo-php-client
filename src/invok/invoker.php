@@ -40,6 +40,6 @@ abstract class Invoker{
         return  __CLASS__;
     }
 
-    abstract protected function __call($name,$arguments);
+    abstract public function __call($name,$arguments);
 }
 

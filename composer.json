@@ -7,7 +7,8 @@
             "email": "314127900@qq.com"
         }
     ],
-    "require": {},
+    "require": {
+    },
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
@@ -15,5 +16,11 @@
             "dubbo\\invok\\":"src/invok",
             "dubbo\\protocols\\":"src/invok/protocols"
         }
-    }
+    },
+    "repositories": {
+    	"packagist": {
+        	"type": "composer",
+        	"url": "https://packagist.phpcomposer.com"
+    	}
+}
 }

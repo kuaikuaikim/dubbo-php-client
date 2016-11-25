@@ -12,6 +12,7 @@ use \dubbo\dubboClient;
 
 // options for register consumer
 // 注册消费者配置
+
 $options= array(
     "registry_address" => "127.0.0.1:2181"
 );
