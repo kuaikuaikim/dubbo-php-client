@@ -104,7 +104,8 @@ class Register{
 
     public function getInvoker($invokerDesc){
         $desc = $invokerDesc->toString();
-        return self::$ServiceMap[$desc];
+		$result = isset(self::$ServiceMap[$desc]) ? self::$ServiceMap[$desc] : false;
+        return $result;
     }
 
 
