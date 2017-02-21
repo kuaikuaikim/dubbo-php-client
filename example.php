@@ -14,17 +14,26 @@ use \dubbo\dubboClient;
 // 注册消费者配置
 
 $options= array(
-    "registry_address" => "127.0.0.1:2181"
+    "registry_address" => "127.0.0.1:2181",
+    'version' => '1.0.0',
+    'group' =>null,
+    'protocol' => 'jsonrpc'
 );
 
-$dubboCli = new dubboClient($options);
-$testService = $dubboCli->getService("com.dubbo.demo.HelloService","1.0.0",null);
-$ret = $testService->hello("dubbo php client");
-$mapRet = $testService->mapEcho();
-$objectRet = $testService->objectEcho();
+try {
+	$dubboCli = new dubboClient($options);
+	$testService = $dubboCli->getService("com.dubbo.demo.HelloService");
+	$ret = $testService->hello("dubbo php client");
+	$mapRet = $testService->mapEcho();
+	$objectRet = $testService->objectEcho();
 
-var_dump($ret);
-var_dump($mapRet);
-var_dump($objectRet);
+	var_dump($ret);
+	var_dump($mapRet);
+	var_dump($objectRet);
+	
+} catch (Exception $e) {
+	print($e->getMessage());   
+}
+
 
 ?>

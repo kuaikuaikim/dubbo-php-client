@@ -28,12 +28,16 @@ class dubboClient{
      * @param string $protocol (service protocol e.g. jsonrpc dubbo hessian)
      * @return get| specific dubbo service with your params
      */
-    public function getService($serviceName, $version, $group, $protocol = "jsonrpc"){
-        $invokerDesc = new InvokerDesc($serviceName, $version, $group);
+    public function getService($serviceName, $version = '0.0.0', $group = null, $protocol = "jsonrpc", $forceVgp = false){
+        $serviceVersion = !$forceVgp ? $this->register->getServiceVersion() : $version;
+        $serviceGroup = !$forceVgp ? $this->register->getServiceGroup() : $group;
+        $serviceProtocol = !$forceVgp ? $this->register->getServiceProtocol() : $protocol;
+
+        $invokerDesc = new InvokerDesc($serviceName, $serviceVersion, $serviceGroup);
         $invoker = $this->register->getInvoker($invokerDesc);
         if(!$invoker){
             //$invoker = new jsonrpc();
-            $invoker = $this->makeInvokerByProtocol($protocol);
+            $invoker = $this->makeInvokerByProtocol($serviceProtocol);
             $this->register->register($invokerDesc,$invoker);
         }
         return $invoker;
