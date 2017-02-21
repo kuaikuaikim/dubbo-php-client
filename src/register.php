@@ -12,7 +12,10 @@ class Register{
 
     public $config = array(
         'registry_address' => '127.0.0.1:2181',
-        'provider_timeout' => 5 //seconds
+        'provider_timeout' => 5, //seconds
+        'version' => '0.0.0',
+        'group' =>null,
+        'protocol' => 'jsonrpc'
      );
 
     public $zookeeper = null;
@@ -126,7 +129,19 @@ class Register{
         return $this->config['registry_address'];
     }
 
+    public function getServiceVersion() {
+        return $this->config['version'];
+    }
 
+    public function getServiceGroup() {
+        return $this->config['group'];
+    }
+
+    public function getServiceProtocol() {
+        return $this->config['protocol'];
+    }
+
+ 
     /**
      * @param $serviceName
      * @param array $application

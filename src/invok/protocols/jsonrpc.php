@@ -74,7 +74,11 @@ class jsonrpc extends Invoker{
                 throw new \Exception('Incorrect response id (request id: '.$currentId.', response id: '.$response['id'].')');
             }
             if (isset($response['error'])) {
-                throw new \Exception('Request error: '.$response['error']);
+                //var_dump($response);
+                throw new \Exception('Response error: '.
+                                     json_encode($response['error'])
+
+                    );
             }
 
             return $response['result'];
