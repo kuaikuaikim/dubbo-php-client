@@ -95,7 +95,9 @@ class Register{
         $schemeInfo = parse_url($provider);
         $providerConfig = array();
         parse_str($schemeInfo['query'],$providerConfig);
-        if($invokerDesc->isMatch($providerConfig['group'],$providerConfig['version']))
+        $group = isset($providerConfig['group']) ? $providerConfig['group'] : null;
+        $version = isset($providerConfig['version']) ? $providerConfig['version'] : null;
+        if($invokerDesc->isMatch($group,$version))
         {
             $this->providersCluster->addProvider($invokerDesc,'http://'.$schemeInfo['host'].':'.$schemeInfo['port'],$schemeInfo['scheme']);
         }
@@ -104,6 +106,9 @@ class Register{
 
     public function getInvoker($invokerDesc){
         $desc = $invokerDesc->toString();
+        if(!isset($ServiceMap[$desc])){
+            return null;
+        }
         return self::$ServiceMap[$desc];
     }
 
@@ -170,7 +175,7 @@ class Register{
      */
     private function achieveRegisterIp(){
         try {
-            if($_SERVER['SERVER_ADDR'])
+            if(isset($_SERVER) && isset($_SERVER['SERVER_ADDR']))
                 $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
             if (empty($registerIp)) {
                 if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
