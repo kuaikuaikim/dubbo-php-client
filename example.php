@@ -35,5 +35,11 @@ try {
 	print($e->getMessage());   
 }
 
+/* getService method support 2 way. If the forceVgp = true, It will assign the function parameter to service version,group and protocol. Default way is assign the $options configs to these.
+   getService支持两种方式调用。如果forceVgp=true, 该方法将使用传参来绑定服务的版本号，组和协议。默认方式是使用$options数组里的配置绑定。
+*/
+$testServiceWithvgp = $dubboCli->getService("com.dubbo.demo.HelloService","1.0.0",null, $forceVgp = true);
+var_dump($testServiceWithvgp->hello("this request from vgp"));
+
 
 ?>
