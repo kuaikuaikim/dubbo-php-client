@@ -220,7 +220,7 @@ class Register{
                 $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
             }
             if (empty($registerIp)) {
-                $registerIp = getHostByName(getHostName());
+                $registerIp = gethostbyname(gethostname());
             }
         }catch (\Exception $e){
             error_log("We can't get your local ip address.\n");
