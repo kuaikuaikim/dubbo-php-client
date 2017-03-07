@@ -212,8 +212,8 @@ class Register{
             $registerIp = null;
             if(php_sapi_name()=='cli'){
                 if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
-                    $command="/sbin/ifconfig eth0 | grep 'inet' | cut -d: -f2 | awk '{ print $1}'";
-                    $ss = exec($command,$arr);
+                    $command="/sbin/ifconfig eth0 2>&1 | grep 'inet' | cut -d: -f2 | awk '{ print $1}'";
+                    $ss = @exec($command,$arr,$ret);
                     $registerIp = isset($arr[0])?$arr[0]:null;
                 }
             }elseif(isset($_SERVER) && isset($_SERVER['SERVER_ADDR'])){
