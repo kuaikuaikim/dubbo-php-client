@@ -74,7 +74,7 @@ class Register{
         $providerHost = $this->providersCluster->getProvider($invokDesc);
         $invoker->setHost(Invoker::genDubboUrl($providerHost,$invokDesc));
         $registerNode = $this->makeRegistryNode($invokDesc->getService());
-        try {
+//        try {
             $parts = explode('/', $registerNode);
             $parts = array_filter($parts);
             $subpath = '';
@@ -87,9 +87,9 @@ class Register{
             if(!$this->zookeeper->exists($registerNode)) {
                 $this->zookeeper->create($registerNode, '', $this->acl, null);
             }
-        }catch (ZookeeperNoNodeException $ze){
-            error_log("This zookeeper node does not exsit.Please check the zookeeper node information.");
-        }
+//        }catch (ZookeeperNoNodeException $ze){
+//            error_log("This zookeeper node does not exsit.Please check the zookeeper node information.");
+//        }
         return true;
     }
 
@@ -208,7 +208,7 @@ class Register{
      * we will get from the command.
      */
     private function achieveRegisterIp(){
-        try {
+//        try {
             $registerIp = null;
             if(php_sapi_name()=='cli'){
                 if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
@@ -222,10 +222,11 @@ class Register{
             if (empty($registerIp)) {
                 $registerIp = gethostbyname(gethostname());
             }
-        }catch (\Exception $e){
-            error_log("We can't get your local ip address.\n");
-            error_log($e->getMessage()."\n");
-        }
+//        }catch (\Exception $e){
+//            error_log("We can't get your local ip address.\n");
+//            error_log($e->getMessage()."\n");
+//
+//        }
         return $registerIp;
     }
 
