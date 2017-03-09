@@ -28,7 +28,7 @@ class DubboPhpClientServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $source = dirname(__DIR__).'/config/config.php';
+        $source = dirname(dirname(__DIR__)).'/config/config.php';
 
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
             $this->publishes([$source => config_path('dubbo_cli.php')]);
