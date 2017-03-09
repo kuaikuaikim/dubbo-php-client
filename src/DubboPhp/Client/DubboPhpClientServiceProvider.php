@@ -53,8 +53,8 @@ class DubboPhpClientServiceProvider extends ServiceProvider
         });
         $this->app->alias('dubbo_cli.factory', 'DubboPhp\Client\Client');
         $this->app->alias('dubbo_cli', 'DubboPhp\Client\Client');
-        $this->app->alias('DubboPhpClient', 'DubboPhp\Client\Facades\DubboPhpClient');
-        $this->app->alias('DubboPhpClientFactory', 'DubboPhp\Client\Facades\DubboPhpClientFactory');
+//        $this->app->alias('DubboPhpClient', 'DubboPhp\Client\Facades\DubboPhpClient');
+//        $this->app->alias('DubboPhpClientFactory', 'DubboPhp\Client\Facades\DubboPhpClientFactory');
     }
 
     /**
@@ -64,7 +64,10 @@ class DubboPhpClientServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['dubbo_cli', 'dubbo_cli.factory','DubboPhpClient','DubboPhpClientFactory'];
+        return [
+            'dubbo_cli', 'dubbo_cli.factory',
+//            'DubboPhpClient','DubboPhpClientFactory'
+        ];
     }
 
 }

@@ -38,7 +38,7 @@ class Cluster
         $desc = $invokerDesc->toString();
         if(!isset(self::$providerMap[$desc])){
             $invokerArr = explode('_', $desc);
-            throw new DubboPhpException('Request Service Error: Can not find your service.Please Check your service name,version and group.'."\n".'RequestServiceName: '.$invokerArr[0]."\n".'RequestServiceGroup: '.$invokerArr[1]."\n".'RequestServiceVersion: '.$invokerArr[2]."\n".'RequestServiceProtocol: '.$invokerArr[3]."\n");
+            throw new DubboPhpException('Request Service Error: Can not find your service.Please Check your service name,version and group.'.PHP_EOL.'RequestServiceName: '.$invokerArr[0].PHP_EOL.'RequestServiceGroup: '.$invokerArr[1].PHP_EOL.'RequestServiceVersion: '.$invokerArr[2].PHP_EOL.'RequestServiceProtocol: '.$invokerArr[3].PHP_EOL);
         }
         $key = array_rand(self::$providerMap[$desc]);
         return self::$providerMap[$desc][$key];
