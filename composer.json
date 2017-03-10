@@ -1,26 +1,43 @@
 {
     "name": "quickj/dubbo-php-client",
     "description": "dubbo php client",
+    "type": "library",
     "authors": [
         {
             "name": "jquick",
             "email": "314127900@qq.com"
+        },
+        {
+            "name": "nick fan",
+            "email": "nickfan81@gmail.com"
         }
     ],
-    "require": {
-    },
     "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.5.9",
+        "ext-zookeeper": "*",
+        "guzzlehttp/guzzle": "~5.3|~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
     "autoload": {
         "psr-4": {
-            "dubbo\\":"src",
-            "dubbo\\invok\\":"src/invok",
-            "dubbo\\protocols\\":"src/invok/protocols"
+            "dubbo\\":"src/",
+            "dubbo\\invok\\":"src/invok/",
+            "dubbo\\protocols\\":"src/invok/protocols/",
+            "DubboPhp\\Client\\": "src/DubboPhp/Client/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DubboPhp\\Client\\Tests\\": "tests/"
         }
     },
     "repositories": {
-    	"packagist": {
-        	"type": "composer",
-        	"url": "https://packagist.phpcomposer.com"
-    	}
-}
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
 }

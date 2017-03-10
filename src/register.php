@@ -20,7 +20,7 @@ class Register{
 
     public $zookeeper = null;
 
-    protected $ip;
+    protected $ip = null;
 
     protected $providersCluster;
 
@@ -74,7 +74,7 @@ class Register{
         $providerHost = $this->providersCluster->getProvider($invokDesc);
         $invoker->setHost(Invoker::genDubboUrl($providerHost,$invokDesc));
         $registerNode = $this->makeRegistryNode($invokDesc->getService());
-        try {
+//        try {
             $parts = explode('/', $registerNode);
             $parts = array_filter($parts);
             $subpath = '';
@@ -87,9 +87,9 @@ class Register{
             if(!$this->zookeeper->exists($registerNode)) {
                 $this->zookeeper->create($registerNode, '', $this->acl, null);
             }
-        }catch (ZookeeperNoNodeException $ze){
-            error_log("This zookeeper node does not exsit.Please check the zookeeper node information.");
-        }
+//        }catch (ZookeeperNoNodeException $ze){
+//            error_log("This zookeeper node does not exsit.Please check the zookeeper node information.");
+//        }
         return true;
     }
 
@@ -165,7 +165,7 @@ class Register{
         $params = http_build_query($application);
         $path = '/dubbo/'.$serviceName.'/consumers';
         return $path;
-}
+    }
 
 
     protected function getConfiguratorsPath($serviceName){
@@ -183,27 +183,50 @@ class Register{
         var_dump($this->providersCluster);
     }
 
+
+    /**
+     * @param stirn $ip
+     * @return Register
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+        return $this;
+    }
+
+    /**
+     * @return stirn
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
     /**
      * @return stirn
      * Get the consumer server local ip. If we can't get the ip from the environments,
      * we will get from the command.
      */
     private function achieveRegisterIp(){
-        try {
-            if(isset($_SERVER) && isset($_SERVER['SERVER_ADDR']))
-                $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
-            if (empty($registerIp)) {
+//        try {
+            $registerIp = null;
+            if(php_sapi_name()=='cli'){
                 if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
-                    $ss = exec('/sbin/ifconfig | sed -n \'s/^ *.*addr:\\([0-9.]\\{7,\\}\\) .*$/\\1/p\'', $arr);
-                    $registerIp = $arr[0];
-                }else{
-                   // TODO: implement the windows ip
+                    $command="/sbin/ifconfig eth0 2>&1 | grep 'inet' | cut -d: -f2 | awk '{ print $1}'";
+                    $ss = @exec($command,$arr,$ret);
+                    $registerIp = isset($arr[0])?$arr[0]:null;
                 }
+            }elseif(isset($_SERVER) && isset($_SERVER['SERVER_ADDR'])){
+                $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
             }
-        }catch (\Exception $e){
-            error_log("We can't get your local ip address.\n");
-            error_log($e->getMessage()."\n");
-        }
+            if (empty($registerIp)) {
+                $registerIp = gethostbyname(gethostname());
+            }
+//        }catch (\Exception $e){
+//            error_log("We can't get your local ip address.\n");
+//            error_log($e->getMessage()."\n");
+//
+//        }
         return $registerIp;
     }
 

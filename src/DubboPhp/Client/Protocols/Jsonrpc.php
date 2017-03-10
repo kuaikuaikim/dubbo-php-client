@@ -1,23 +1,27 @@
 <?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: user
+ * Date: 2017/3/8
+ * Time: 17:48
+ */
 
-namespace dubbo\invok\protocols;
-require_once dirname(dirname(__FILE__))."/invoker.php";
+namespace DubboPhp\Client\Protocols;
 
-use \dubbo\invok\Invoker;
+use DubboPhp\Client\DubboPhpException;
+use DubboPhp\Client\Invoker;
 
-class jsonrpc extends Invoker{
+class Jsonrpc extends Invoker{
 
-    public function __construct()
+    public function __construct($url=null, $debug=false)
     {
-        parent::__construct();
+        parent::__construct($url,$debug);
     }
-
 
     public function __call($name, $arguments)
     {
-        // TODO: Implement __call() method.
         if (!is_scalar($name)) {
-            throw new \Exception('Method name has no scalar value');
+            throw new DubboPhpException('Method name has no scalar value');
         }
 
         // check
@@ -25,7 +29,7 @@ class jsonrpc extends Invoker{
             // no keys
             $params = array_values($arguments);
         } else {
-            throw new \Exception('Params must be given as array');
+            throw new DubboPhpException('Params must be given as array');
         }
 
         // sets notification or request task
@@ -33,6 +37,7 @@ class jsonrpc extends Invoker{
             $currentId = NULL;
         } else {
             $currentId = $this->id;
+            $this->id++;
         }
 
         // prepares the request
@@ -57,14 +62,14 @@ class jsonrpc extends Invoker{
         $curlErrorMessage = curl_error($ch);
         curl_close($ch);
         if ($responseContent === FALSE)  {
-            throw new \Exception('Unable to connect to '.$this->url.' :'.$curlErrorMessage,$curlErrorCode);
+            throw new DubboPhpException('Unable to connect to '.$this->url.' :'.$curlErrorMessage,$curlErrorCode);
         }
 
         $response = json_decode($responseContent,true);
         $jsonDecodeErrorCode = json_last_error();
         if($jsonDecodeErrorCode!==JSON_ERROR_NONE){
             $jsonDecodeErrorMessage = json_last_error_msg();
-            throw new \Exception('Unable to decode response content: '.$jsonDecodeErrorMessage.' :'.$responseContent,$jsonDecodeErrorCode);
+            throw new DubboPhpException('Unable to decode response content: '.$jsonDecodeErrorMessage.' :'.$responseContent,$jsonDecodeErrorCode);
         }
 
 
@@ -77,13 +82,13 @@ class jsonrpc extends Invoker{
         if (!$this->notification) {
             // check
             if ($response['id'] != $currentId) {
-                throw new \Exception('Incorrect response id (request id: '.$currentId.', response id: '.$response['id'].')');
+                throw new DubboPhpException('Incorrect response id (request id: '.$currentId.', response id: '.$response['id'].')');
             }
             if (isset($response['error'])) {
                 //var_dump($response);
                 $responseErrorCode = isset($response['error']['code'])?$response['error']['code']:0;
                 $responseErrorMessage = isset($response['error']['message'])?$response['error']['message']:'';
-                throw new \Exception('Response error: '.$responseErrorMessage,$responseErrorCode);
+                throw new DubboPhpException('Response error: '.$responseErrorMessage,$responseErrorCode);
             }
             return $response['result'];
 
@@ -93,5 +98,3 @@ class jsonrpc extends Invoker{
     }
 
 }
-
-
