@@ -67,14 +67,14 @@ try {
 $testServiceWithvgp = $dubboCli->getService("com.dubbo.demo.HelloService","1.0.0",null, $forceVgp = true);
 var_dump($testServiceWithvgp->hello("this request from vgp"));
 
-``` 
+
 ```  
 ###example
 ```bash
 php -f example.php
 ```
 
-###dubbo-php-client 中文版说明
+#dubbo-php-client 中文版说明
 [DUBBO](https://github.com/alibaba/dubbo)是一个分布式服务框架,致力于提供高性能和透明化的RPC远程服务调用方案,是阿里巴巴SOA服务化治理方案的核心框架  
 这是dubbo的唯一php客户端，目前只支持jsonRPC协议，将来会支持多种协议。你可以查看我之前写的[dubbo-jsonRPC-demo](https://github.com/quickj/dubbo_jsonrpc_demo)例子。  
 #####注意:  
@@ -146,9 +146,6 @@ var_dump($testServiceWithvgp->hello("this request from vgp"));
 php -f example.php
 ```
 
-
-
-
 -------------------
 
 #按Composer规范修改版本
@@ -168,7 +165,7 @@ php -f example.php
 
 然后安装执行：
 
-```
+```bash
 composer require -vvv "quickj/dubbo-php-client:dev-master"
 
 ```
@@ -176,7 +173,7 @@ composer require -vvv "quickj/dubbo-php-client:dev-master"
 
 ### 调用样例-直接类调用：
 
-```
+```php
 
 use DubboPhp\Client\Client;
 
@@ -217,13 +214,13 @@ config/app.php的
 
 providers数组中增加：
 
-```
+```php
 DubboPhp\Client\DubboPhpClientServiceProvider::class
 ```
 
 aliases别名数组中增加：
 
-```
+```php
 
 'DubboPhpClient'=>DubboPhp\Client\Facades\DubboPhpClient::class,
 
@@ -234,7 +231,7 @@ aliases别名数组中增加：
 
 然后命令行发布一下系统基本配置文件dubbo_cli.php到config路径：
 
-```
+```php
 php artisan vendor:publish --provider="DubboPhp\Client\DubboPhpClientServiceProvider"
 
 ```
@@ -246,7 +243,7 @@ php artisan vendor:publish --provider="DubboPhp\Client\DubboPhpClientServiceProv
 
 #### 单实例方式（配置读取config('dubbo_cli.default')）：
 
-```
+```php
 $testService = DubboPhpClient::getService('com.dubbo.demo.HelloService');
 
 $ret = $testService->hello("dubbo php client");
@@ -256,7 +253,7 @@ var_dump($ret);
 
 #### 多实例的方式（配置读取config('dubbo_cli.connections.xxx')）：
 
-```
+```php
 $clientA = DubboPhpClientFactory::factory(config('dubbo_cli.connections.xxxA'));
 $testServiceA = $clientA->getService('com.dubbo.demo.HelloService');
 $retA = $testServiceA->hello("dubbo php client");
