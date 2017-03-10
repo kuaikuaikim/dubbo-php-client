@@ -44,7 +44,7 @@ class Client
      * @param $version  (service version e.g. 1.0)
      * @param $group    (service group)
      * @param string $protocol (service protocol e.g. jsonrpc dubbo hessian)
-     * @return get| specific dubbo service with your params
+     * @return Invoker
      */
     public function getService($serviceName, $version = self::VERSION_DEFAULT, $group = null, $protocol = self::PROTOCOL_JSONRPC, $forceVgp = false){
         $serviceVersion = !$forceVgp ? $this->register->getServiceVersion() : $version;

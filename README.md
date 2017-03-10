@@ -144,4 +144,127 @@ var_dump($testServiceWithvgp->hello("this request from vgp"));
 ###例子
 ```bash
 php -f example.php
-``` 
+```
+
+
+
+
+-------------------
+
+#按Composer规范修改版本
+
+在本仓库分支未被quickj合并之前composer.json需要加入自定义源：
+本地依赖包的仓库地址(repositories)节点中增加:
+
+```
+"repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/nickfan/dubbo-php-client.git"
+        }
+    ]
+
+```
+
+然后安装执行：
+
+```
+composer require -vvv "quickj/dubbo-php-client:dev-master"
+
+```
+
+
+### 调用样例-直接类调用：
+
+```
+
+use DubboPhp\Client\Client;
+
+$options = [
+    'registry_address' => '127.0.0.1:2181',
+    'version' => '1.0.0',
+    'group' =>null,
+    'protocol' => 'jsonrpc'
+];
+
+try {
+    $dubboCli = new Client($options);
+    $testService = $dubboCli->getService("com.dubbo.demo.HelloService");
+    $ret = $testService->hello("dubbo php client");
+    var_dump($ret);
+    $mapRet = $testService->mapEcho();
+    var_dump($mapRet);
+
+    $objectRet = $testService->objectEcho();
+    var_dump($objectRet);
+
+    /**
+     * getService method support 2 way. If the forceVgp = true, It will assign the function parameter to service version,group and protocol. Default way is assign the $options configs to these.
+     * getService支持两种方式调用。如果forceVgp=true, 该方法将使用传参来绑定服务的版本号，组和协议。默认方式是使用$options数组里的配置绑定。
+     */
+    $testServiceWithvgp = $dubboCli->getService("com.dubbo.demo.HelloService","1.0.0",null, $forceVgp = true);
+    $vgpRet = $testServiceWithvgp->hello("this request from vgp");
+    var_dump($vgpRet);
+} catch (\DubboPhp\Client\DubboPhpException $e) {
+    print($e->getMessage());
+}
+
+```
+
+### Laravel组件模式安装
+
+config/app.php的
+
+providers数组中增加：
+
+```
+DubboPhp\Client\DubboPhpClientServiceProvider::class
+```
+
+aliases别名数组中增加：
+
+```
+
+'DubboPhpClient'=>DubboPhp\Client\Facades\DubboPhpClient::class,
+
+'DubboPhpClientFactory'=>DubboPhp\Client\Facades\DubboPhpClientFactory::class,
+
+```
+
+
+然后命令行发布一下系统基本配置文件dubbo_cli.php到config路径：
+
+```
+php artisan vendor:publish --provider="DubboPhp\Client\DubboPhpClientServiceProvider"
+
+```
+
+基本安装配置完成，相关的配置在config('dubbo_cli.default')中设置，具体参考配置文件
+
+
+### Laravel中的使用：
+
+#### 单实例方式（配置读取config('dubbo_cli.default')）：
+
+```
+$testService = DubboPhpClient::getService('com.dubbo.demo.HelloService');
+
+$ret = $testService->hello("dubbo php client");
+var_dump($ret);
+    
+```
+
+#### 多实例的方式（配置读取config('dubbo_cli.connections.xxx')）：
+
+```
+$clientA = DubboPhpClientFactory::factory(config('dubbo_cli.connections.xxxA'));
+$testServiceA = $clientA->getService('com.dubbo.demo.HelloService');
+$retA = $testServiceA->hello("dubbo php client");
+var_dump($retA);
+
+$clientB = DubboPhpClientFactory::factory(config('dubbo_cli.connections.xxxB'));
+$testServiceB = $clientB->getService('com.dubbo.demo.HelloService');
+$retB = $testServiceB->hello("dubbo php client");
+var_dump($retB);
+
+```
