@@ -5,9 +5,9 @@ the dubbo php client(中文说明往下拉)
 
 This is only dubbo php clinet implementation. It's only support jsonRPC now.  
 you can see the example for the [dubbo-jsonRPC-demo](https://github.com/quickj/dubbo_jsonrpc_demo) which i write before.  
-#####Notice:  
+##### Notice:  
 you must start dubbo and zookeeper,register prividers first.  
-###Installation  
+### Installation  
 If you have not installed [zookeeper extension](http://pecl.php.net/package/zookeeper) for php,then
 ```bash
 sudo apt-get install php-pear php5-dev make  
@@ -25,12 +25,12 @@ Add zookeeper.so to your php.ini(/etc/php5/apache2/php.ini and /etc/php5/cli/php
 extension="/usr/lib/php5/20121212/zookeeper.so"  
 ```  
 
-#####Require dubbo-php-client package to your project(composer)
+##### Require dubbo-php-client package to your project(composer)
 ```bash
 composer require quickj/dubbo-php-client
 ```  
 
-###Usage
+### Usage
 ```php
 require_once "src/dubboClient.php";
 use \dubbo\dubboClient;
@@ -69,18 +69,18 @@ var_dump($testServiceWithvgp->hello("this request from vgp"));
 
 
 ```  
-###example
+### example
 ```bash
 php -f example.php
 ```
 
-#dubbo-php-client 中文版说明
+# dubbo-php-client 中文版说明
 [DUBBO](https://github.com/alibaba/dubbo)是一个分布式服务框架,致力于提供高性能和透明化的RPC远程服务调用方案,是阿里巴巴SOA服务化治理方案的核心框架  
 这是dubbo的唯一php客户端，目前只支持jsonRPC协议，将来会支持多种协议。你可以查看我之前写的[dubbo-jsonRPC-demo](https://github.com/quickj/dubbo_jsonrpc_demo)例子。  
-#####注意:  
+##### 注意:  
 使用之前你必须安装和启动dubbo,zookeeper,注册服务者。  
 
-###安装
+### 安装
 如果你还没安装php的[zookeeper扩展](http://pecl.php.net/package/zookeeper)，需要
 ```bash
 sudo apt-get install php-pear php5-dev make  
@@ -99,11 +99,11 @@ sudo make install
 ```bash
 extension="/usr/lib/php5/20121212/zookeeper.so"
 ```  
-#####引入dubbo-php-client包到你的项目中(composer)
+##### 引入dubbo-php-client包到你的项目中(composer)
 ```bash
 composer require quickj/dubbo-php-client
 ```  
-###如何使用
+### 如何使用
 ```php
 require_once "src/dubboClient.php";
 use \dubbo\dubboClient;
@@ -141,14 +141,14 @@ $testServiceWithvgp = $dubboCli->getService("com.dubbo.demo.HelloService","1.0.0
 var_dump($testServiceWithvgp->hello("this request from vgp"));
 
 ``` 
-###例子
+### 例子
 ```bash
 php -f example.php
 ```
 
 -------------------
 
-#按Composer规范修改版本
+# 按Composer规范修改版本
 
 在本仓库分支未被quickj合并之前composer.json需要加入自定义源：
 本地依赖包的仓库地址(repositories)节点中增加:
