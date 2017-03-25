@@ -47,6 +47,9 @@ class Jsonrpc extends Invoker{
             'id' => $currentId
         );
         $request = json_encode($request);
+        // curl -i -H 'content-type: application/json' -X POST -d '{"jsonrpc": "2.0", "method": "hello", "params": [ "World"],"id": 1 , "version":"1.0.0"}' 'http://127.0.0.1:8080/com.dubbo.demo.HelloService'
+        //echo 'curl -i -H \'content-type: application/json\' -X POST -d \''.$request.'\' \''.$this->url.'\''.PHP_EOL;
+
         $this->debug && $this->debug.='***** Request *****'."\n".$request."\n".'***** End Of request *****'."\n\n";
 
         $ch = curl_init();
