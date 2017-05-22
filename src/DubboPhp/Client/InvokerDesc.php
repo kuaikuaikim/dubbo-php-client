@@ -16,10 +16,11 @@ class InvokerDesc
     private $version ;
     private $schema = 'jsonrpc';
 
-    public function __construct($serviceName, $version=null, $group=null){
+    public function __construct($serviceName, $version=null, $group=null,$schema='jsonrpc'){
         $this->serviceName = $serviceName ;
         $this->version = $version;
         $this->group = $group;
+        !empty($schema) && $this->schema = $schema;
     }
 
     public function getService(){
@@ -37,12 +38,12 @@ class InvokerDesc
         return $this->serviceName.'_'.$group_str.'_'.$version_str.'_'.$this->schema;
     }
 
-    public function isMatch($group,$version){
-        return $this->group === $group && $this->version === $version;
+    public function isMatch($group,$version,$schema='jsonrpc'){
+        return $this->group === $group && $this->version === $version && $this->schema === $schema;
     }
 
     public function isMatchDesc($desc){
-        return $this->group == $desc->group && $this->version == $desc->version;
+        return $this->group == $desc->group && $this->version == $desc->version && $this->schema == $desc->schema;
     }
 
 }

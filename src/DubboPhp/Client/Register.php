@@ -112,7 +112,8 @@ class Register
         parse_str($schemeInfo['query'], $providerConfig);
         $group = isset($providerConfig['group']) ? $providerConfig['group'] : null;
         $version = isset($providerConfig['version']) ? $providerConfig['version'] : null;
-        if ($invokerDesc->isMatch($group, $version)) {
+        $protocol = isset($schemeInfo['scheme']) ? $schemeInfo['scheme'] : null;
+        if ($invokerDesc->isMatch($group, $version,$protocol)) {
             $this->providersCluster->addProvider($invokerDesc,
                 'http://' . $schemeInfo['host'] . ':' . $schemeInfo['port'], $schemeInfo['scheme']);
         }

@@ -46,10 +46,9 @@ class Jsonrpc extends Invoker{
             'params' => $params,
             'id' => $currentId
         );
-        $request = json_encode($request);
         // curl -i -H 'content-type: application/json' -X POST -d '{"jsonrpc": "2.0", "method": "hello", "params": [ "World"],"id": 1 , "version":"1.0.0"}' 'http://127.0.0.1:8080/com.dubbo.demo.HelloService'
-        //echo 'curl -i -H \'content-type: application/json\' -X POST -d \''.$request.'\' \''.$this->url.'\''.PHP_EOL;
-
+//        echo 'curl -i -H \'content-type: application/json\' -X POST -d \''.json_encode($request).'\' \''.$this->url.'\''.PHP_EOL;
+        $request = json_encode($request);
         $this->debug && $this->debug.='***** Request *****'."\n".$request."\n".'***** End Of request *****'."\n\n";
 
         $ch = curl_init();
@@ -62,8 +61,12 @@ class Jsonrpc extends Invoker{
 
         $responseContent = curl_exec($ch);
         $curlErrorCode = curl_errno($ch);
-        $curlErrorMessage = curl_error($ch);
         curl_close($ch);
+        $curlErrorMessage = curl_error($ch);
+//        echo '$curlErrorCode:'.$curlErrorCode.PHP_EOL;
+//        echo '$curlErrorMessage:'.$curlErrorMessage.PHP_EOL;
+//        echo '$responseContent:'.PHP_EOL.$responseContent.PHP_EOL;
+        
         if ($responseContent === FALSE)  {
             throw new DubboPhpException('Unable to connect to '.$this->url.' :'.$curlErrorMessage,$curlErrorCode);
         }

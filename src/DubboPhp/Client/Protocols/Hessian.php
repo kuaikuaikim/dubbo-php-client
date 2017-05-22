@@ -15,6 +15,9 @@ class Hessian extends Invoker
 {
     public function __construct($url=null, $debug=false)
     {
+        //@todo implement method
+        throw new DubboPhpException('Protocol not implemented yet.');
+
         parent::__construct($url,$debug);
     }
 
