@@ -61,8 +61,8 @@ class Jsonrpc extends Invoker{
 
         $responseContent = curl_exec($ch);
         $curlErrorCode = curl_errno($ch);
-        curl_close($ch);
         $curlErrorMessage = curl_error($ch);
+        curl_close($ch);
 //        echo '$curlErrorCode:'.$curlErrorCode.PHP_EOL;
 //        echo '$curlErrorMessage:'.$curlErrorMessage.PHP_EOL;
 //        echo '$responseContent:'.PHP_EOL.$responseContent.PHP_EOL;
