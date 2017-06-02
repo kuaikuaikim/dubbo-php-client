@@ -61,8 +61,10 @@ class Register
         $children = $this->zookeeper->getChildren($path);
         if (count($children) > 0) {
             foreach ($children as $key => $provider) {
-                $provider = urldecode($provider);
-                $this->methodChangeHandler($invokDesc, $provider);
+                if (strpos($provider, Client::PROTOCOL_JSONRPC) !== false) { // TODO 多协议版本的时候需要判断是否是 jsonnpc 调用
+                    $provider = urldecode($provider);
+                    $this->methodChangeHandler($invokDesc, $provider);
+                }
             }
             $this->configurators();
         }
