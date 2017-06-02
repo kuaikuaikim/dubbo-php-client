@@ -172,7 +172,7 @@ class Register
     private function makeRegistryNode($serviceName, $application = [])
     {
         $params = http_build_query($application);
-        $url = '/dubbo/' . $serviceName . '/consumers/' . urlencode('consumer://' . $this->ip . '/' . $serviceName . '?') . $params;
+        $url = '/dubbo/' . $serviceName . '/consumers/' . urlencode('consumer://' . $this->ip . '/' . $serviceName . '?category=consumers&protocol=jsonrpc&') . $params;
         return $url;
     }
 
