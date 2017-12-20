@@ -1,7 +1,7 @@
 <?php
 
 namespace dubbo\invok\protocols;
-require_once dirname(dirname(__FILE__))."/invoker.php";
+require_once dirname(dirname(__FILE__)) . "/invoker.php";
 
 use \dubbo\invok\Invoker;
 
@@ -42,48 +42,58 @@ class jsonrpc extends Invoker{
             'id' => $currentId
         );
         $request = json_encode($request);
-        $this->debug && $this->debug.='***** Request *****'."\n".$request."\n".'***** End Of request *****'."\n\n";
-
-        // performs the HTTP POST
-        $opts = array ('http' => array (
-            'method'  => 'POST',
-            'header'  => 'Content-type: application/json',
-            'content' => $request
-        ));
-        $context  = stream_context_create($opts);
-        if ($fp = fopen($this->url, 'r', false, $context)) {
-            $response = '';
-            while($row = fgets($fp)) {
-                $response.= trim($row)."\n";
-            }
-            $this->debug && $this->debug.='***** Server response *****'."\n".$response.'***** End of server response *****'."\n";
-            $response = json_decode($response,true);
-        } else {
-            throw new \Exception('Unable to connect to '.$this->url);
+        $this->debug && $this->debug .= '***** Request *****' . "\n" . $request . "\n" . '***** End Of request *****' . "\n\n";
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        
+        $responseContent = curl_exec($ch);
+        $curlErrorCode = curl_errno($ch);
+        $curlErrorMessage = curl_error($ch);
+        curl_close($ch);
+        if ($responseContent === FALSE) {
+            throw new \Exception('Unable to connect to ' . $this->url . ' :' . $curlErrorMessage, $curlErrorCode);
         }
-
+        
+        $response = json_decode($responseContent, TRUE);
+        $jsonDecodeErrorCode = json_last_error();
+        if ($jsonDecodeErrorCode !== JSON_ERROR_NONE) {
+            $jsonDecodeErrorMessage = json_last_error_msg();
+            throw new \Exception('Unable to decode response content: ' . $jsonDecodeErrorMessage . ' :' . $responseContent, $jsonDecodeErrorCode);
+        }
+        
+        
         // debug output
         if ($this->debug) {
             //echo nl2br($debug);
         }
-
+        
         // final checks and return
         if (!$this->notification) {
             // check
-            if ($response['id'] != $currentId) {
-                throw new \Exception('Incorrect response id (request id: '.$currentId.', response id: '.$response['id'].')');
+            $responseId = isset($response['id']) ? $response['id'] : NULL;
+            if ($responseId != $currentId) {
+                throw new \Exception('Incorrect response id (request id: ' . $currentId . ', response id: ' . $responseId . ')');
             }
-            if (!is_null($response['error'])) {
-                throw new \Exception('Request error: '.$response['error']);
+            if (isset($response['error'])) {
+                //var_dump($response);
+                $responseErrorCode = isset($response['error']['code']) ? $response['error']['code'] : 0;
+                $responseErrorMessage = isset($response['error']['message']) ? $response['error']['message'] : '';
+                throw new \Exception('Response error: ' . $responseErrorMessage, $responseErrorCode);
             }
-
+            
             return $response['result'];
-
+            
         } else {
-            return true;
+            return TRUE;
         }
     }
-
+    
 }
 
 

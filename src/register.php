@@ -12,182 +12,226 @@ class Register{
 
     public $config = array(
         'registry_address' => '127.0.0.1:2181',
-        'provider_timeout' => 5 //seconds
-     );
-
-    public $zookeeper = null;
-
-    protected $ip;
-
+        'provider_timeout' => 5, //seconds
+        'version'          => '0.0.0',
+        'group'            => NULL,
+        'protocol'         => 'jsonrpc',
+    );
+    
+    public $zookeeper = NULL;
+    
+    protected $ip = NULL;
+    
     protected $providersCluster;
-
+    
     public static $ServiceMap = array();
-
-    protected  $acl = array(
-                      array(
-                        'perms' => \Zookeeper::PERM_ALL,
-                        'scheme' => 'world',
-                        'id' => 'anyone' ) );
-
-    public function __construct($options = array())
-    {
-        $this->config = array_merge($this->config,$options);
+    
+    protected $acl = array(
+        array(
+            'perms'  => \Zookeeper::PERM_ALL,
+            'scheme' => 'world',
+            'id'     => 'anyone'));
+    
+    public function __construct($options = array()) {
+        $this->config = array_merge($this->config, $options);
         $this->ip = $this->achieveRegisterIp();
         $this->providersCluster = Cluster::getInstance();
-        $this->zookeeper= $this->makeZookeeper($this->config['registry_address']);
+        $this->zookeeper = $this->makeZookeeper($this->config['registry_address']);
     }
-
+    
     private function makeZookeeper($registry_address) {
-                return new \Zookeeper ($registry_address);
+        return new \Zookeeper ($registry_address);
     }
-
-    public function subscribe($invokDesc){
-           $desc = $invokDesc->toString();
-           $serviceName = $invokDesc->getService();
-
-           $path = $this->getSubscribePath($serviceName);
-           $children = $this->zookeeper->getChildren($path);
-           if(count($children) > 0){
-                foreach ($children as $key => $provider) {
+    
+    public function subscribe($invokDesc) {
+        $desc = $invokDesc->toString();
+        $serviceName = $invokDesc->getService();
+        
+        $path = $this->getSubscribePath($serviceName);
+        $children = @$this->zookeeper->getChildren($path);
+        if (count($children) > 0) {
+            foreach ($children as $key => $provider) {
+                // TODO 多协议版本的时候需要判断是否是 jsonnpc 调用
+                if (strpos($provider, 'jsonrpc') !== FALSE) {
                     $provider = urldecode($provider);
                     $this->methodChangeHandler($invokDesc, $provider);
                 }
-               $this->configurators();
             }
+            $this->configurators();
+        }
     }
-
+    
     /**
      * @param $invokDesc
      * @param $invoker
+     *
      * @return bool
      * Register consumer information node to the zookeeper.
      */
-    public function register($invokDesc, $invoker){
+    public function register($invokDesc, $invoker) {
         $desc = $invokDesc->toString();
-        if(!array_key_exists($desc,self::$ServiceMap)){
+        if (!array_key_exists($desc, self::$ServiceMap)) {
             self::$ServiceMap[$desc] = $invoker;
         }
         $this->subscribe($invokDesc);
         $providerHost = $this->providersCluster->getProvider($invokDesc);
-        $invoker->setHost(Invoker::genDubboUrl($providerHost,$invokDesc));
+        $invoker->setHost(Invoker::genDubboUrl($providerHost, $invokDesc));
         $registerNode = $this->makeRegistryNode($invokDesc->getService());
-        try {
-            $parts = explode('/', $registerNode);
-            $parts = array_filter($parts);
-            $subpath = '';
-            while (count($parts) > 1) {
-                $subpath .= '/' . array_shift($parts);
-                if (!$this->zookeeper->exists($subpath)) {
-                    $this->zookeeper->create($subpath,'',$this->acl, null);
-                }
+        //    try {
+        $parts = explode('/', $registerNode);
+        $parts = array_filter($parts);
+        $subpath = '';
+        while (count($parts) > 1) {
+            $subpath .= '/' . array_shift($parts);
+            if (!$this->zookeeper->exists($subpath)) {
+                $this->zookeeper->create($subpath, '', $this->acl, NULL);
             }
-            if(!$this->zookeeper->exists($registerNode)) {
-                $this->zookeeper->create($registerNode, '', $this->acl, null);
-            }
-        }catch (ZookeeperNoNodeException $ze){
-            error_log("This zookeeper node does not exsit.Please check the zookeeper node information.");
         }
-        return true;
+        if (!$this->zookeeper->exists($registerNode)) {
+            $this->zookeeper->create($registerNode, '', $this->acl, NULL);
+        }
+        
+        return TRUE;
     }
-
-
-    public function methodChangeHandler($invokerDesc, $provider){
+    
+    
+    public function methodChangeHandler($invokerDesc, $provider) {
         $schemeInfo = parse_url($provider);
         $providerConfig = array();
-        parse_str($schemeInfo['query'],$providerConfig);
-        if($invokerDesc->isMatch($providerConfig['group'],$providerConfig['version']))
-        {
-            $this->providersCluster->addProvider($invokerDesc,'http://'.$schemeInfo['host'].':'.$schemeInfo['port'],$schemeInfo['scheme']);
+        parse_str($schemeInfo['query'], $providerConfig);
+        $group = isset($providerConfig['group']) ? $providerConfig['group'] : NULL;
+        $version = isset($providerConfig['version']) ? $providerConfig['version'] : NULL;
+        if ($invokerDesc->isMatch($group, $version)) {
+            $this->providersCluster->addProvider($invokerDesc, 'http://' . $schemeInfo['host'] . ':' . $schemeInfo['port'], $schemeInfo['scheme']);
         }
     }
-
-
-    public function getInvoker($invokerDesc){
+    
+    
+    public function getInvoker($invokerDesc) {
         $desc = $invokerDesc->toString();
-		$result = isset(self::$ServiceMap[$desc]) ? self::$ServiceMap[$desc] : false;
-        return $result;
+        if (!isset($ServiceMap[$desc])) {
+            return NULL;
+        }
+        
+        return self::$ServiceMap[$desc];
     }
-
-
-    public function configurators(){
-        return true;
+    
+    
+    public function configurators() {
+        return TRUE;
     }
-
-
-    protected function getSubscribePath($serviceName){
-        return '/dubbo/' .$serviceName.'/providers';
+    
+    
+    protected function getSubscribePath($serviceName) {
+        return '/dubbo/' . $serviceName . '/providers';
     }
-
+    
     protected function getRegistryAddress() {
         return $this->config['registry_address'];
     }
-
-
+    
+    public function getServiceVersion() {
+        return $this->config['version'];
+    }
+    
+    public function getServiceGroup() {
+        return $this->config['group'];
+    }
+    
+    public function getServiceProtocol() {
+        return $this->config['protocol'];
+    }
+    
+    
     /**
-     * @param $serviceName
+     * @param       $serviceName
      * @param array $application
+     *
      * @return string
      * Make a dubbo consumer address for this node which want register itself under the dubbo service
-     *
      */
-    private function makeRegistryNode($serviceName, $application = array()){
+    private function makeRegistryNode($serviceName, $application = array()) {
         $params = http_build_query($application);
-        $url = '/dubbo/'.$serviceName.'/consumers/'.urlencode('consumer://'.$this->ip.'/'.$serviceName.'?').$params;
+        $url = '/dubbo/' . $serviceName . '/consumers/' . urlencode('consumer://' . $this->ip . '/' . $serviceName . '?category=consumers&protocol=jsonrpc&') . $params;
+        
         return $url;
     }
-
-
+    
+    
     /**
-     * @param $serviceName
+     * @param       $serviceName
      * @param array $application
+     *
      * @return string
      */
-    private function makeRegistryPath($serviceName, $application = array()){
+    private function makeRegistryPath($serviceName, $application = array()) {
         $params = http_build_query($application);
-        $path = '/dubbo/'.$serviceName.'/consumers';
+        $path = '/dubbo/' . $serviceName . '/consumers';
+        
         return $path;
-}
-
-
-    protected function getConfiguratorsPath($serviceName){
-        return '/dubbo/'.$serviceName.'/configurators';
     }
-
-    protected function  getProviderTimeout(){
+    
+    
+    protected function getConfiguratorsPath($serviceName) {
+        return '/dubbo/' . $serviceName . '/configurators';
+    }
+    
+    protected function getProviderTimeout() {
         return $this->config['provider_timeout'] * 1000;
     }
-
-
-    public function zkinfo($invokerDesc){
+    
+    
+    public function zkinfo($invokerDesc) {
         echo $this->getRegistryPath($invokerDesc->getService());
-        var_dump($this->providersCluster->getProviders());
-        var_dump($this->providersCluster);
     }
-
+    
+    
+    /**
+     * @param stirn $ip
+     *
+     * @return Register
+     */
+    public function setIp($ip) {
+        $this->ip = $ip;
+        
+        return $this;
+    }
+    
+    /**
+     * @return stirn
+     */
+    public function getIp() {
+        return $this->ip;
+    }
+    
     /**
      * @return stirn
      * Get the consumer server local ip. If we can't get the ip from the environments,
      * we will get from the command.
      */
-    private function achieveRegisterIp(){
-        try {
-            if($_SERVER['SERVER_ADDR'])
-                $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
-            if (empty($registerIp)) {
-                if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
-                    $ss = exec('/sbin/ifconfig | sed -n \'s/^ *.*addr:\\([0-9.]\\{7,\\}\\) .*$/\\1/p\'', $arr);
-                    $registerIp = $arr[0];
-                }else{
-                   // TODO: implement the windows ip
-                }
+    private function achieveRegisterIp() {
+//        try {
+        $registerIp = NULL;
+        if (php_sapi_name() == 'cli') {
+            if (substr(strtolower(PHP_OS), 0, 3) != 'win') {
+                $command = "/sbin/ifconfig eth0 2>&1 | grep 'inet' | cut -d: -f2 | awk '{ print $1}'";
+                $ss = @exec($command, $arr, $ret);
+                $registerIp = isset($arr[0]) ? $arr[0] : NULL;
             }
-        }catch (\Exception $e){
-            error_log("We can't get your local ip address.\n");
-            error_log($e->getMessage()."\n");
+        } elseif (isset($_SERVER) && isset($_SERVER['SERVER_ADDR'])) {
+            $registerIp = gethostbyaddr($_SERVER['SERVER_ADDR']);
         }
+        if (empty($registerIp)) {
+            $registerIp = gethostbyname(gethostname());
+        }
+//        }catch (\Exception $e){
+//            error_log("We can't get your local ip address.\n");
+//            error_log($e->getMessage()."\n");
+//
+//        }
         return $registerIp;
     }
-
+    
 }
 
 ?>
