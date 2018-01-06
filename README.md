@@ -95,21 +95,6 @@ extension="/usr/lib/php5/20121212/zookeeper.so"
 
 # 按Composer规范使用dubbo-php-client
 
-在本仓库分支未被quickj合并之前composer.json需要加入自定义源：
-本地依赖包的仓库地址(repositories)节点中增加:
-
-```
-"repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/kuaikuaikim/dubbo-php-client.git"
-        }
-    ]
-
-```
-
-然后安装执行：
-
 ```bash
 composer require -vvv "quickj/dubbo-php-client:dev-master"
 
