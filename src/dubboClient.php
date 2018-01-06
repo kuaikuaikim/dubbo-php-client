@@ -29,16 +29,17 @@ class dubboClient{
      *
      * @return get| specific dubbo service with your params
      */
-    public function getService($serviceName, $options) {
-        $serviceVersion = !$options['forceVgp'] ? $this->register->getServiceVersion() : $options['version'];
-        $serviceGroup = !$options['forceVgp'] ? $this->register->getServiceGroup() : $options['group'];
-        $serviceProtocol = !$options['forceVgp'] ? $this->register->getServiceProtocol() : $options['protocol'];
+    public function getService($serviceName, $version = '0.0.0', $group = null, $protocol = "jsonrpc", $forceVgp = false){
+        $serviceVersion = !$forceVgp ? $this->register->getServiceVersion() : $version;
+        $serviceGroup = !$forceVgp ? $this->register->getServiceGroup() : $group;
+        $serviceProtocol = !$forceVgp ? $this->register->getServiceProtocol() : $protocol;
 
         $invokerDesc = new InvokerDesc($serviceName, $serviceVersion, $serviceGroup);
         $invoker = $this->register->getInvoker($invokerDesc);
-        if (!$invoker) {
+        if(!$invoker){
+            //$invoker = new jsonrpc();
             $invoker = $this->makeInvokerByProtocol($serviceProtocol);
-            $this->register->register($invokerDesc, $invoker);
+            $this->register->register($invokerDesc,$invoker);
         }
         
 	return $invoker;

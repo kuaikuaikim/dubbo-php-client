@@ -51,11 +51,12 @@ class jsonrpc extends Invoker{
         curl_setopt($ch, CURLOPT_POST, TRUE);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        
+
         $responseContent = curl_exec($ch);
         $curlErrorCode = curl_errno($ch);
         $curlErrorMessage = curl_error($ch);
         curl_close($ch);
+
         if ($responseContent === FALSE) {
             throw new \Exception('Unable to connect to ' . $this->url . ' :' . $curlErrorMessage, $curlErrorCode);
         }

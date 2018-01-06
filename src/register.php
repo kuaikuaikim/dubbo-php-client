@@ -112,7 +112,6 @@ class Register{
         if (!isset($ServiceMap[$desc])) {
             return NULL;
         }
-        
         return self::$ServiceMap[$desc];
     }
     
@@ -167,7 +166,6 @@ class Register{
     private function makeRegistryPath($serviceName, $application = array()) {
         $params = http_build_query($application);
         $path = '/dubbo/' . $serviceName . '/consumers';
-        
         return $path;
     }
     
@@ -184,7 +182,7 @@ class Register{
     public function zkinfo($invokerDesc) {
         echo $this->getRegistryPath($invokerDesc->getService());
     }
-    
+
     
     /**
      * @param stirn $ip
