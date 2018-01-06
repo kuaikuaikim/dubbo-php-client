@@ -27,7 +27,7 @@ extension="/usr/lib/php5/20121212/zookeeper.so"
 
 ##### Require dubbo-php-client package to your project(composer)
 ```bash
-composer require quickj/dubbo-php-client
+composer require -vvv "quickj/dubbo-php-client:dev-master"
 ```  
 
 ### Usage
