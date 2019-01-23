@@ -68,11 +68,8 @@ class Client
         if(!isset(self::$protocolSupports[$protocol]) || self::$protocolSupports[$protocol]!=true){
             throw new DubboPhpException('Protocol Not Supported yet.');
         }
-        if(!isset(self::$protocols[$protocol])){
-            $providerName = 'DubboPhp\\Client\\Protocols\\'.ucfirst($protocol);
-            self::$protocols[$protocol] = new $providerName($url,$debug);
-        }
-        return self::$protocols[$protocol];
+        $providerName = 'DubboPhp\\Client\\Protocols\\'.ucfirst($protocol);
+        return new $providerName($url, $debug);
     }
 
 }
